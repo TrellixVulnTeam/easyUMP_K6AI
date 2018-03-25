@@ -1,0 +1,7 @@
+CREATE TABLE `itm_iptoapp` (
+  `WRITE_TIME` datetime NOT NULL,
+  `IP_ADDRESS` varchar(64) NOT NULL,
+  `APP_NAME` varchar(64) NOT NULL,
+  `APP_CODE` varchar(64) NOT NULL,
+  PRIMARY KEY (`WRITE_TIME`,`IP_ADDRESS`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
