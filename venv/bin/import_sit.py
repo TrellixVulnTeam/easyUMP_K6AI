@@ -40,7 +40,7 @@ counter_err = 0
 # 设置log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE)
+handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
@@ -48,7 +48,7 @@ logger.addHandler(handler)
 
 
 def main():
-    logger.info("开始处理situation xml文件！");
+    logger.info("Begin to import xml files in SITUATION directory.");
     #清空数据库
     clean_db();
 
@@ -58,6 +58,7 @@ def main():
 
     #根据列出的目录，调用导入函数
     agent_list = ['01','02','GB','HT','LZ','MQ','NT','OQ','RZ','T3','T5','UD','UL','UM','UX','VM','YJ','Others']
+    logger.info("Processing directory: %s",agent_list)
     for agent in agent_list:
        path = os.path.join(FILE_PATH,agent)
        word = "CEB_"
@@ -66,7 +67,7 @@ def main():
     conn.commit()
     conn.close()
 
-    logger.info("共处理situation%s个，其中%s个描述字段不符合规范需整改！",counter,counter_err);
+    logger.info("Successfully import situations:%s. Warning records:%s.",counter,counter_err);
 
 
 #清空数据库
@@ -77,7 +78,7 @@ def clean_db():
     cursor.execute(sql);
     conn.commit();
     print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info('表%s已被清空！',TABLE_NAME)
+    logger.info("Table %s has been cleaned!",TABLE_NAME)
 
 
 # 按照agent导入
@@ -124,8 +125,8 @@ def proc_sit(cursor,xmlfile,agent):
                 period = tmpDesc[1]
                 isstd_sit = tmpDesc[2]
             else:
-                print("Situation描述字段不符合规范：%s" % sit_name )
-                logger.warn("Situation描述字段不符合规范：%s",sit_name)
+                print("Format is error:%s." % sit_name )
+                logger.warn("Format is error:%s.",sit_name)
                 counter_err += 1
 
         #级别处理。SITINFO 字段举例 ：  COUNT=3;ATOM=K01SERVER.SERVERNAME;TFWD=Y;SEV=Minor;TDST=0;~;
@@ -144,8 +145,6 @@ def proc_sit(cursor,xmlfile,agent):
                 severity = '4'
 
     sql = sql_tmp + "'" + threshold + "','" + period + "','" + isstd_sit + "','" + severity +  "');"
-    #import_data(cursor,sql);
-    print(sql)
     cursor.execute(sql)
     return sql;
 

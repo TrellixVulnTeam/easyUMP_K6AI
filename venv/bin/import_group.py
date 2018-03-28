@@ -39,7 +39,7 @@ counter = 0
 # 设置log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE)
+handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
@@ -48,10 +48,10 @@ logger.addHandler(handler)
 
 
 def main():
-    logger.info('开始导入group to host 数据！')
+    logger.info("Begin to import %s file.",SOURCE_FILE)
     clean_db()
     process_group()
-    logger.info('正常导入%s条记录完成。', counter)
+    logger.info("Import %s records.", counter)
 
 def clean_db():
     conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
@@ -60,13 +60,12 @@ def clean_db():
     cursor.execute(sql);
     conn.commit();
     print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info('表%s已被清空！',TABLE_NAME)
+    logger.info("Table %s has been cleaned!",TABLE_NAME)
 
 def import_data(cursor,groupname,agentname):
     global counter
     sqlStr = "insert into {0} (WRITE_TIME,GROUP_NAME,AGENT_NAME) values (%s,%s,%s)".format(TABLE_NAME)
     cursor.execute(sqlStr, (write_time,groupname,agentname));
-    print('insert data success');
     counter += 1
 
 def process_group():

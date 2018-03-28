@@ -10,8 +10,6 @@ import os
 import configparser
 
 
-
-
 # read config
 cur_path=os.path.dirname(os.path.realpath(__file__))
 config_path=os.path.join(cur_path,'../conf/config.ini')
@@ -54,7 +52,7 @@ def main():
 
     clean_db();
 
-    logger.info('开始导入ip to app 数据！')
+    logger.info("Begin to import %s file!",SOURCE_FILE)
     conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
     cursor = conn.cursor();
     with open(SOURCE_FILE, 'r', encoding="utf-8") as f:
@@ -68,13 +66,13 @@ def main():
                 import_data(cursor,ipaddress,app_name,app_code);
                 counter += 1
             else:
-                print('格式存在问题的记录:'+ line)
-                logger.error('格式存在问题的记录: %s',line)
+                print("Error record:" + line)
+                logger.error("Error record: %s",line)
                 counter_err += 1
              #   print("hello")
     conn.commit()
     conn.close()
-    logger.info('正常导入%s条记录完成。另，%s条记录重复，%s条格式异常。',counter,counter_dup,counter_err)
+    logger.info("Successfully import records:%s . Duplicated records:%s. Error records:%s",counter,counter_dup,counter_err)
 
 def clean_db():
     conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
@@ -83,7 +81,7 @@ def clean_db():
     cursor.execute(sql);
     conn.commit();
     print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info('表%s已被清空！',TABLE_NAME)
+    logger.info("Table %s has been cleaned",TABLE_NAME)
 
 def import_data(cursor,ipaddress,app_name,app_code):
     global counter_dup
@@ -91,8 +89,8 @@ def import_data(cursor,ipaddress,app_name,app_code):
     try:
         cursor.execute(sqlStr,(write_time,ipaddress,app_name,app_code));
     except:
-        print('重复的记录:'+ ipaddress);
-        logger.error('重复的记录: %s', ipaddress)
+        print("Duplicated record:"+ ipaddress);
+        logger.error("Duplicated record: %s", ipaddress)
         counter_dup += 1
 
 if __name__ == '__main__':

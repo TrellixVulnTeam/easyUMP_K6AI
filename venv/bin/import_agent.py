@@ -38,7 +38,7 @@ host_dict = {}
 # 设置log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE)
+handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
@@ -46,7 +46,7 @@ logger.addHandler(handler)
 
 
 def main():
-    logger.info("开始处理agentinfo.txt文件！")
+    logger.info("Begin to import %s file.",SOURCE_FILE)
     # 清空数据库
     clean_db()
 
@@ -56,8 +56,8 @@ def main():
     # 补漏，完善ip信息
     post_process()
 
-    logger.info("处理完成！")
-    print("处理完成，共%s条记录！" % counter)
+    logger.info("Import done:%s.", counter)
+    print("Import done:%s." % counter)
 
 
 # 清空数据库
@@ -69,7 +69,7 @@ def clean_db():
     conn.commit()
     conn.close()
     print("Table %s has been cleaned!" % TABLE_NAME)
-    logger.info('表%s已被清空！', TABLE_NAME)
+    logger.info("Table %s has been cleaned!", TABLE_NAME)
 
 
 def import_data(cursor,AGENT_NAME,AGENT_CODE,AGENT_VERSION,HOSTNAME,IP_ADDRESS,INSTANCE,AGENT_HOST,AGENT_TYPE):
@@ -79,8 +79,8 @@ def import_data(cursor,AGENT_NAME,AGENT_CODE,AGENT_VERSION,HOSTNAME,IP_ADDRESS,I
     try:
         cursor.execute(sqlStr,(write_time,AGENT_NAME,AGENT_CODE,AGENT_VERSION,HOSTNAME,IP_ADDRESS,INSTANCE,AGENT_HOST,AGENT_TYPE))
     except:
-        print("有问题的记录:%s" % AGENT_NAME)
-        logger.error('有问题的记录:%s', AGENT_NAME)
+        print("Duplicated record:%s" % AGENT_NAME)
+        logger.error("Duplicated record:%s", AGENT_NAME)
     counter += 1
 
 

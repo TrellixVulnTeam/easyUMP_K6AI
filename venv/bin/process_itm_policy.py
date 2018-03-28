@@ -40,17 +40,17 @@ group_to_agent_dict = {}
 # 设置log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE)
+handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 def main():
-    logger.info('开始处理ITM档案信息分析和入库！')
+    logger.info("Begin to insert to table:",TABLE_NAME)
     clean_db()
     query_sit()
-    logger.info("处理完成！共导入%s条档案信息",counter)
+    logger.info("Success insert records:%s.",counter)
 
 def isIP(str): #判断字符串是否IP地址格式
     p = re.compile('^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
@@ -66,14 +66,14 @@ def clean_db():
     cursor.execute(sql);
     conn.commit();
     print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info('表%s已被清空！',TABLE_NAME)
+    logger.info("Table %s has been cleaned!",TABLE_NAME)
 
 def query_sit():
     agent_to_ip_dict()
     agent_to_host_dict()
 
     f = open("rs.txt", 'w', encoding="utf8");
-    f.write("开始写文件\n")
+    f.write("Begin to write:\n")
     f.close()
     conn = get_conn()
     cursor = conn.cursor();

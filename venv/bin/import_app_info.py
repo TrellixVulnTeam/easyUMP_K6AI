@@ -36,7 +36,7 @@ counter = 0
 # 设置log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE)
+handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
@@ -45,10 +45,10 @@ logger.addHandler(handler)
 
 def main():
     clean_db();
-    logger.info('开始导入从xml导入app数据！')
+    logger.info("Begin to import %s file !",SROUCE_FILE)
     process(SROUCE_FILE);
     print("Total %s application have been imported !" % counter)
-    logger.info('共导入完成%s条信息。',counter)
+    logger.info("Total import %s records.",counter)
 
 
 def clean_db():
@@ -59,7 +59,7 @@ def clean_db():
     conn.commit();
     conn.close()
     print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info('表%s已被清空！',TABLE_NAME)
+    logger.info('Table %s has been cleaned!',TABLE_NAME)
 
 def import_app(cursor,sql):
     global counter

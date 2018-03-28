@@ -24,8 +24,8 @@ DB_SCHEMA = conf.get("MYSQL", "DB_SCHEMA")
 DB_CHARSET = conf.get("MYSQL", "DB_CHARSET")
 
 # 特定参数
-SOURCE_PATH = conf.get("SOURCE_FILE", "SIT_ENRICH_FILE")
-LOG_FILE = conf.get("BASE_CONF", "LOG_PATH") + "/import_sit_info.log"
+SOURCE_FILE = conf.get("SOURCE_FILE", "SIT_ENRICH_FILE")
+LOG_FILE = conf.get("BASE_CONF", "LOG_PATH") + "/import_sit_enrich.log"
 TABLE_NAME = "itm_sit_enrich"
 
 #设置全局变量
@@ -38,7 +38,7 @@ counter_err = 0
 # 设置log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE)
+handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
@@ -46,10 +46,10 @@ logger.addHandler(handler)
 
 
 def main():
-    logger.info('开始导入sit_enrich 数据！')
+    logger.info("Begin to import %s file.",SOURCE_FILE)
     clean_db()
     process_sit_enrich()
-    logger.info('正常导入%s条记录完成。', counter)
+    logger.info("Successfully import %s records!", counter)
 
 def clean_db():
     conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
@@ -58,14 +58,14 @@ def clean_db():
     cursor.execute(sql);
     conn.commit();
     print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info('表%s已被清空！',TABLE_NAME)
+    logger.info("Table %s has been cleaned!",TABLE_NAME)
 
 def process_sit_enrich():
     global  counter_err
     global  counter
     conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
     cursor = conn.cursor();
-    with open(SOURCE_PATH, 'r',encoding='UTF-8') as file_to_read:
+    with open(SOURCE_FILE, 'r',encoding='UTF-8') as file_to_read:
         for lines in file_to_read.readlines():
             lines_tmp =  lines.split('\t')
 
@@ -85,8 +85,8 @@ def process_sit_enrich():
                 cursor.execute(sqlStr,(write_time,SITNAME,SIT_DESC,THRESHOLD_FLAG,CUR_VALUE_FLAG,DISPLAY_FLAG,N_ComponentType,N_ComponentTypeId,N_Component,N_ComponentId,N_SubComponent,N_SubComponentId));
                 counter += 1
             except:
-                    print("有问题的记录:%s" % SITNAME)
-                    logger.error('有问题的记录:%s', SITNAME )
+                    #print("Duplicated situation:%s" % SITNAME)
+                    logger.error("Duplicated situation: %s", SITNAME )
                     counter_err += 1
     conn.commit()
     conn.close()
