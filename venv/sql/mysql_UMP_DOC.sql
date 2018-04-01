@@ -1,4 +1,4 @@
-CREATE TABLE `UMP_DOC` (
+CREATE TABLE ump.`UMP_DOC` (
   `WRITE_TIME` datetime NOT NULL,
   `KEYWORD` varchar(128) NOT NULL,
   `APP_NAME` varchar(64) DEFAULT NULL,
