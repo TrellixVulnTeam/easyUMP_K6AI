@@ -1,4 +1,4 @@
-CREATE TABLE `app_info` (
+CREATE TABLE `APP_INFO` (
   `WRITE_TIME` datetime NOT NULL,
   `c1` varchar(64) NOT NULL,
   `systemcode` varchar(64) DEFAULT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE `app_info` (
   `englishcode` varchar(64) DEFAULT NULL,
   `affectsystem` varchar(64) DEFAULT NULL,
   `branch` varchar(64) DEFAULT NULL,
-  `[key]` varchar(64) DEFAULT NULL,
+  `key_sys` varchar(64) DEFAULT NULL,
   `status` varchar(64) DEFAULT NULL,
   `securitylevel` varchar(64) DEFAULT NULL,
   `scope` varchar(64) DEFAULT NULL,

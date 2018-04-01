@@ -1,4 +1,4 @@
-CREATE TABLE `itm_iptoapp` (
+CREATE TABLE `ITM_IPTOAPP` (
   `WRITE_TIME` datetime NOT NULL,
   `IP_ADDRESS` varchar(64) NOT NULL,
   `APP_NAME` varchar(64) NOT NULL,

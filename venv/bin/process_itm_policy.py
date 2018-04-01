@@ -1,92 +1,48 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import re
 import datetime
-import sys
-import logging
-import pymysql
-import os
-import configparser
+from sub_common import *
 
-# read config
-cur_path=os.path.dirname(os.path.realpath(__file__))
-config_path=os.path.join(cur_path,'../conf/config.ini')
-conf = configparser.ConfigParser()
-conf.read(config_path,encoding='utf-8-sig')
-DB_IP = conf.get("MYSQL", "DB_IP")
-DB_PORT = conf.get("MYSQL", "DB_PORT")
-DB_USER = conf.get("MYSQL", "DB_USER")
-DB_PASSWORD = conf.get("MYSQL", "DB_PASSWORD")
-DB_SCHEMA = conf.get("MYSQL", "DB_SCHEMA")
-DB_CHARSET = conf.get("MYSQL", "DB_CHARSET")
+# 设置log
+logger = get_logger("process.log")
 
 # 特定参数
-LOG_FILE = conf.get("BASE_CONF", "LOG_PATH") + "/process_itm_policy.log"
-TABLE_NAME = "itm_policy"
+TABLE_NAME = "ITM_POLICY"
 
 # 设置全局变量
 write_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 global counter
 counter = 0
 global agent_to_ip_dict
-agent_to_ip_dict = {}
 global agent_to_host_dict
-agent_to_host_dict = {}
 global group_to_agent_dict
-group_to_agent_dict = {}
-
-
-# 设置log
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.FileHandler(LOG_FILE,encoding="UTF-8")
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 def main():
-    logger.info("Begin to insert to table:",TABLE_NAME)
-    clean_db()
+    logger.info("Begin to insert to table:%s.",TABLE_NAME)
+
+    delsql = "delete from {0} ".format(TABLE_NAME)
+    clean_db(delsql);
+
     query_sit()
+
     logger.info("Success insert records:%s.",counter)
-
-def isIP(str): #判断字符串是否IP地址格式
-    p = re.compile('^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
-    if p.match(str):
-        return True
-    else:
-        return False
-
-def clean_db():
-    conn = get_conn()
-    cursor = conn.cursor();
-    sql = "delete from " + TABLE_NAME
-    cursor.execute(sql);
-    conn.commit();
-    print("Table %s has been cleaned!" % TABLE_NAME);
-    logger.info("Table %s has been cleaned!",TABLE_NAME)
 
 def query_sit():
     agent_to_ip_dict()
     agent_to_host_dict()
 
-    f = open("rs.txt", 'w', encoding="utf8");
-    f.write("Begin to write:\n")
-    f.close()
     conn = get_conn()
     cursor = conn.cursor();
-    sqlStr = "select SITNAME,DISTRIBUTION from itm_sit_info";
+    sqlStr = "select SITNAME,DISTRIBUTION from ITM_SIT_INFO";
     cursor.execute(sqlStr); #循环所有situation
     rows_sit = cursor.fetchall()
-    f = open("rs.txt", 'a', encoding="utf8");
     if len(rows_sit) > 0:
         for i in range(len(rows_sit)):
 
             #根据situation名字进行丰富
             sitname = str(rows_sit[i][0])
-            sqlStr = "select SIT_DESC,N_ComponentType,N_Component,N_SubComponent from itm_sit_enrich where SITNAME = \'{0}\'".format(
+            sqlStr = "select SIT_DESC,N_ComponentType,N_Component,N_SubComponent from ITM_SIT_ENRICH where SITNAME = \'{0}\'".format(
                 sitname)
             cursor.execute(sqlStr)
             rows_enrich = cursor.fetchall()
@@ -103,7 +59,7 @@ def query_sit():
 
             #根据situation名字查找sit原始信息
             sitname = str(rows_sit[i][0])
-            sqlStr = "select ISSTD,PDT,THRESHOLD,SEVERITY from itm_sit_info " \
+            sqlStr = "select ISSTD,PDT,THRESHOLD,SEVERITY from ITM_SIT_INFO " \
                      "where SITNAME = \'{0}\'".format(sitname)
             cursor.execute(sqlStr)
             rows_enrich = cursor.fetchall()
@@ -134,11 +90,7 @@ def query_sit():
                         host = ''
 
                     appname = iptoapp(ip_address)
-                    content = str(sitname) + ":" + host + ":" + ip_address + ":" + appname[0] + ":" + sit_desc + ":" + n_componenttype + ":" + n_component + ":" + n_subcomponent +  ":" + severity + "\n"
-                    f.write(content)
                     import_data(cursor,sitname,host,ip_address,agent,appname[0],sit_desc,n_componenttype,n_component,n_subcomponent,severity)
-
-                pass
 
             elif group_flag == -1 : #situation下发到组的情况
 
@@ -160,19 +112,15 @@ def query_sit():
                             ip_address = ''
                         appname = iptoapp(ip_address)  # 根据IP地址，查找应用系统信息
 
-                        #print(str(sitname) + ":"+ agent[0] + ":" + ip_address[0] + ":" + sit_desc + ":" + n_componenttype + ":" + n_component + ":" + n_subcomponent)
-                        content = str(sitname) + ":"+ host + ":" + ip_address + ":" + appname[0] + ":" + sit_desc + ":" + n_componenttype + ":" + n_component + ":" + n_subcomponent +  ":" + severity +  "\n"
-                        f.write(content)
                         import_data(cursor,sitname, host, ip_address, agent, appname[0], sit_desc, n_componenttype, n_component,n_subcomponent,severity)
                         pass
     conn.commit()
     conn.close()
-    f.close()
 
 def import_data(cursor,sitname,host,ip_address,agent,appname,sit_desc,n_componenttype,n_component,n_subcomponent,severity):
     global counter
-    sqlStr = "insert into itm_policy  (WRITE_TIME,APP_NAME,IP_ADDRESS,AGENT_NAME,HOSTNAME,SIT_NAME,SIT_DESC,COMPONENT_TYPE,COMPONENT,SUB_COMPONENT,SEVERITY)" \
-             "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
+    sqlStr = "insert into {0}  (WRITE_TIME,APP_NAME,IP_ADDRESS,AGENT_NAME,HOSTNAME,SIT_NAME,SIT_DESC,COMPONENT_TYPE,COMPONENT,SUB_COMPONENT,SEVERITY)" \
+             "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ".format(TABLE_NAME)
     cursor.execute(sqlStr,(write_time,appname,ip_address,agent,host,sitname,sit_desc,n_componenttype,n_component,n_subcomponent,severity))
     counter += 1
 
@@ -180,7 +128,7 @@ def iptoapp(ip_address):
     appname = ()
     conn = get_conn()
     cursor = conn.cursor();
-    sqlStr = "select APP_NAME from itm_iptoapp where IP_ADDRESS = '" + ip_address + "'"
+    sqlStr = "select APP_NAME from ITM_IPTOAPP where IP_ADDRESS = '" + ip_address + "'"
     cursor.execute(sqlStr);
     rows_app = cursor.fetchall()
     if len(rows_app) > 0 : #如果找到了APP，则赋值
@@ -193,9 +141,10 @@ def iptoapp(ip_address):
 
 def agent_to_ip_dict():
     global agent_to_ip_dict
+    agent_to_ip_dict = {}
     conn = get_conn()
     cursor = conn.cursor();
-    cursor.execute("select AGENT_NAME,IP_ADDRESS from itm_agent_info where IP_ADDRESS != ''");
+    cursor.execute("select AGENT_NAME,IP_ADDRESS from ITM_AGENT_INFO where IP_ADDRESS != ''");
     rows = cursor.fetchall()
     agent_to_ip_dict = {}
     for row in rows:
@@ -204,10 +153,11 @@ def agent_to_ip_dict():
 
 def agent_to_host_dict():
     global agent_to_host_dict
-    #conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
+    agent_to_host_dict = {}
+
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute("select AGENT_NAME,HOSTNAME from itm_agent_info where HOSTNAME != ''");
+    cursor.execute("select AGENT_NAME,HOSTNAME from ITM_AGENT_INFO where HOSTNAME != ''");
     rows = cursor.fetchall()
     agent_to_host_dict = {}
     for row in rows:
@@ -217,19 +167,13 @@ def agent_to_host_dict():
 def group_to_agent(group_name):
     conn = get_conn()
     cursor = conn.cursor();
-    cursor.execute("select AGENT_NAME from itm_group_info where GROUP_NAME = %s",group_name);
+    cursor.execute("select AGENT_NAME from ITM_GROUP_INFO where GROUP_NAME = %s",group_name);
     rows = cursor.fetchall()
     agent_list = []
     for row in rows:
         agent_list.append(row[0])
     conn.close()
     return (agent_list)
-
-
-def get_conn():
-    conn = pymysql.connect(host=DB_IP,port=int(DB_PORT),user=DB_USER,passwd=DB_PASSWORD,db=DB_SCHEMA,use_unicode=True,charset=DB_CHARSET)
-    return(conn)
-
 
 if __name__ == '__main__':
         main()

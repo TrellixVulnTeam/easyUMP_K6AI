@@ -1,4 +1,4 @@
-CREATE TABLE `itm_policy` (
+CREATE TABLE `ITM_POLICY` (
   `WRITE_TIME` datetime NOT NULL,
   `APP_NAME` varchar(64) DEFAULT NULL,
   `IP_ADDRESS` varchar(64) DEFAULT NULL,

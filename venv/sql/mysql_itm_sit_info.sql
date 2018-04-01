@@ -1,4 +1,4 @@
-CREATE TABLE `itm_sit_info` (
+CREATE TABLE `ITM_SIT_INFO` (
   `WRITE_TIME` datetime NOT NULL,
   `AGENT` varchar(64) NOT NULL,
   `SITNAME` varchar(64) NOT NULL,
@@ -31,8 +31,11 @@ CREATE TABLE `itm_sit_info` (
   `TEXT` varchar(64) DEFAULT NULL,
   `DISTRIBUTION` text,
   `THRESHOLD` varchar(64) DEFAULT NULL,
-  `PERIOD` varchar(64) DEFAULT NULL,
+  `MON_PERIOD` varchar(64) DEFAULT NULL,
   `ISSTD` varchar(64) DEFAULT NULL,
   `SEVERITY` varchar(32) DEFAULT NULL,
+  `FORWARD` varchar(16) DEFAULT NULL,
+  `REPEAT_COUNT` varchar(16) DEFAULT NULL,
+  `ATOM` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`WRITE_TIME`,`SITNAME`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8

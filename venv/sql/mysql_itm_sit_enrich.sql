@@ -1,4 +1,4 @@
-CREATE TABLE `itm_sit_enrich` (
+CREATE TABLE `ITM_SIT_ENRICH` (
 	`WRITE_TIME` datetime NOT NULL,
     `SITNAME`        varchar(64) NOT NULL,
     `SIT_DESC`        varchar(128) NOT NULL,

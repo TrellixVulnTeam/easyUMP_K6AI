@@ -1,4 +1,4 @@
-CREATE TABLE ump.`itm_group_info` (
+CREATE TABLE `ITM_GROUP_INFO` (
   `WRITE_TIME` datetime NOT NULL,
   `GROUP_NAME` varchar(64) NOT NULL,
   `AGENT_NAME` varchar(64) DEFAULT NULL
