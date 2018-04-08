@@ -1,0 +1,21 @@
+[BASE_CONF]
+BASE_PATH = /opt/itump/easyump/itmapp/
+LOG_PATH = /opt/itump/easyump/itmapp/logs/
+
+[MYSQL]
+DB_IP = 192.168.3.155
+DB_PORT = 3333
+DB_USER = ump
+DB_PASSWORD = 123456
+DB_SCHEMA = ump
+DB_CHARSET = utf8
+
+
+[SOURCE_FILE]
+APP_INFO = /opt/itump/easyump/itmapp/src/sysInfo.xml
+GROUP_INFO = /opt/itump/easyump/itmapp/src/groupToagent.txt
+IPTOAPP_FILE = /opt/itump/easyump/itmapp/src/ITM_HostToApp.lookup
+SIT_PATH = /opt/itump/easyump/itmapp/src/SITUATION
+SIT_ENRICH_FILE = /opt/itump/easyump/itmapp/src/ITM_Situation.lookup
+AGENT_INFO = /opt/itump/easyump/itmapp/src/agentinfo.txt
+AGENT_ENRICH_CONF = /opt/itump/easyump/itmapp/src/AGENT-MOTYPE.csv

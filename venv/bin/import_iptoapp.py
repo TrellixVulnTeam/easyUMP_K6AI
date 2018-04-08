@@ -41,10 +41,9 @@ def main():
                 import_data(cursor,ipaddress,app_name,app_code);
                 counter += 1
             else:
-                print("Error record:" + line)
                 logger.error("Error record: %s",line)
                 counter_err += 1
-             #   print("hello")
+
     conn.commit()
     conn.close()
     logger.info("Successfully import records:%s . Duplicated records:%s. Error records:%s",counter,counter_dup,counter_err)

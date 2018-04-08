@@ -1,0 +1,26 @@
+Windows环境
+1.pycharm 安装 cx-Oracle
+
+2.解压缩instance client
+C:\Oracle\instantclient_12_2 
+
+3.拷贝dll文件
+拷贝 C:\Oracle\instantclient_12_2\*.dll  到 python项目目录下，如venv\Lib\site-packages
+
+4.添加环境变量
+计算机--属性--高级设置--环境变量
+PATH 增加一个路径 C:\Oracle\instantclient_12_2
+
+5.示例代码
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import cx_Oracle
+
+db=cx_Oracle.connect('itmuser/itmuser@1.1.1.1/WAREHOUS')
+cursor = db.cursor()
+sql = "select count(*) from tabs"
+rs = cursor.execute(sql)
+result = rs.fetchall()
+print(result)
+db.close()
