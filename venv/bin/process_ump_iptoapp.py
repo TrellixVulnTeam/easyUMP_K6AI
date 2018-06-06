@@ -54,6 +54,14 @@ def process_import():
 
             if  phy_ip != "None":
                 ip_type = "PHYSICIP"
+                phy_iplist = phy_ip.split(" ")
+                if len(phy_iplist) > 1:
+                    for phy_ip_instance in phy_iplist:
+                        if re.match(r"10\.",phy_ip_instance):
+                            phy_ip = phy_ip_instance
+                            break
+                        elif re.match(r"192\.",phy_ip_instance):
+                            phy_ip = phy_ip_instance
                 ip_address = phy_ip
                 sql = '''insert into {0} (  WRITE_TIME,IP_ADDRESS,IP_TYPE,IP_SOURCE,APP_CODE,APP_NAME,USETYPE)
                         values( %s,%s,%s,%s,%s,%s,%s)
