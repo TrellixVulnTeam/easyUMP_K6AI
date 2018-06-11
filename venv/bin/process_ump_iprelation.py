@@ -34,7 +34,7 @@ def process_import():
             FROM 
                 ump.CMDB_OS_RAW
             WHERE 
-                USETYPE='生产机' and (FLOATIP != 'None' or MAPPINGIP !='None')
+                USETYPE='生产机' and COLLECTSTATUS !='已下线' and (FLOATIP != 'None' or MAPPINGIP !='None')
         '''
     cursor.execute(sql);
     rows = cursor.fetchall()
