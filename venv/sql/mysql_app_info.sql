@@ -1,3 +1,4 @@
+drop table if exists APP_INFO;
 CREATE TABLE `APP_INFO` (
   `WRITE_TIME` datetime NOT NULL,
   `c1` varchar(64) NOT NULL,

@@ -1,3 +1,5 @@
+
+drop table if exists ITM_SIT_ENRICH;
 CREATE TABLE `ITM_SIT_ENRICH` (
 	`WRITE_TIME` datetime NOT NULL,
     `SITNAME`        varchar(64) NOT NULL,

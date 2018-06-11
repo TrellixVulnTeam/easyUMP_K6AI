@@ -1,3 +1,4 @@
+drop table if exists ITM_GROUP_INFO;
 CREATE TABLE `ITM_GROUP_INFO` (
   `WRITE_TIME` datetime NOT NULL,
   `GROUP_NAME` varchar(64) NOT NULL,
