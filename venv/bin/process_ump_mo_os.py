@@ -43,7 +43,7 @@ def process_import():
             from 
                 CMDB_OS_RAW
             where 
-                USETYPE='生产机' 
+                USETYPE='生产机' and COLLECTSTATUS !='已下线'
         '''
     cursor.execute(sql);
     rows = cursor.fetchall()
