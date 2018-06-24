@@ -48,20 +48,19 @@ def process_import():
     cursor.execute(sql);
     rows = cursor.fetchall()
     if len(rows) > 0:
-        i = 0
-        for i in range(len(rows)):
-            ip_address = str(rows[i][0])
-            agentid = str(rows[i][1])
-            app_code = str(rows[i][2])
-            app_name = str(rows[i][3])
-            usetype = str(rows[i][4])
-            hostname = str(rows[i][5])
-            systemversion = str(rows[i][6])
-            ip = str(rows[i][7])
-            floatip = str(rows[i][8])
-            mappingip = str(rows[i][9])
-            applicationtype = str(rows[i][10])
-            disastertype = str(rows[i][11])
+        for row in rows:
+            ip_address = str(row[0])
+            agentid = str(row[1])
+            app_code = str(row[2])
+            app_name = str(row[3])
+            usetype = str(row[4])
+            hostname = str(row[5])
+            systemversion = str(row[6])
+            ip = str(row[7])
+            floatip = str(row[8])
+            mappingip = str(row[9])
+            applicationtype = str(row[10])
+            disastertype = str(row[11])
 
             keyword = ip_address
             volume_type = ""
@@ -70,15 +69,19 @@ def process_import():
             is_ism = 0
             is_tuxedo = 0
             is_vcs = 0
-            if systemversion.find("SUSE"):
+            if not systemversion.find("SUSE"):
                 os_type = "SUSE"
-            elif systemversion.find("RED HAT"):
+            elif not systemversion.find("Red Hat"):
                 os_type = "REDHAT"
-            elif systemversion.find("AIX"):
+            elif not systemversion.find("CentOS"):
+                os_type = "CENTOS"
+            elif not systemversion.find("Inspur K-UX"):
+                os_type = "K-UX"
+            elif not systemversion.find("AIX"):
                 os_type = "AIX"
-            elif systemversion.find("HP-UX"):
+            elif not systemversion.find("HP-UX"):
                 os_type = "HP-UX"
-            elif systemversion.find("Microsoft"):
+            elif not systemversion.find("Microsoft"):
                 os_type = "WINDOWS"
             else:
                 os_type = "UNKNOWN"
